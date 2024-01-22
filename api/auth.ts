@@ -39,12 +39,16 @@ export const loginHandler = (req: Request, res: Response) => {
       unautorizedResponse(req, res)
       return
     }
-    const accessToken = jwt.sign({ nodeId: '' /** add unique node id  */ }, jwtSecret)
+    const accessToken = jwt.sign({ nodeId: '' /** add unique node id  */ }, jwtSecret, { expiresIn: '8h' })
+
+    const cookieExpiration = new Date();
+    cookieExpiration.setTime(cookieExpiration.getTime() + (8 * 60 * 60 * 1000));
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: true,
       sameSite: "strict",
+      expires: cookieExpiration,
     });
     res.send({ status : 'ok' })
   })
